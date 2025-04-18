@@ -1,0 +1,1159 @@
+{
+	"info": {
+		"_postman_id": "49c0f159-9618-46a5-8675-be0b64e51acb",
+		"name": "KaziMostafaMoymim_01400804185",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41463947"
+	},
+	"item": [
+		{
+			"name": "Health_check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"if (statusCode === 200) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(true)\r",
+							"})\r",
+							"pm.test(\"Status code is 200\")\r",
+							"pm.test(\"Message is 'Notes API is Running'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Notes API is Running\")\r",
+							"})\r",
+							"} else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health-check",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health-check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var  jsonData = pm.response.json();\r",
+							"var statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode === 201) {\r",
+							"    pm.test(\"Status code is 201\");\r",
+							"    pm.test(\"Message is 'User account created successfully' \", function(){ \r",
+							"        pm.expect(jsonData.message).to.eql(\"User account created successfully\");\r",
+							"    });\r",
+							"    pm.test(\"Name field is correct\", function(){ \r",
+							"        pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"name\"));\r",
+							"    });\r",
+							"   pm.test(\"Email field is correct \", function () {\r",
+							"    pm.expect(jsonData.data.email.toLowerCase()).to.eql(pm.variables.get(\"email\").toLowerCase());\r",
+							"});\r",
+							"}else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Invalid input data'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Invalid input data\")\r",
+							"})\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var name = pm.variables.replaceIn('{{$randomFirstName}}')\r",
+							"pm.environment.set(\"name\",name)\r",
+							"var email = pm.variables.replaceIn('{{$randomEmail}}')\r",
+							"pm.environment.set(\"email\",email)\r",
+							"var password = pm.variables.replaceIn('{{$randomPassword}}')\r",
+							"pm.environment.set(\"password\",password)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"{{name}}\",\r\n        \"email\": \"{{email}}\",\r\n        \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LogIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"pm.environment.set(\"token\",jsonData.data.token)\r",
+							"pm.environment.set(\"userId\",jsonData.data.id)\r",
+							"var statusCode = pm.response.code;\r",
+							"\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"    pm.test(\"Status code is 200\");\r",
+							"    pm.test(\"Message field value is correct\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Login successful\"); \r",
+							"    });\r",
+							"    pm.test(\"Name field value is correct\", function () {\r",
+							"        pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"name\"));\r",
+							"    });\r",
+							"    pm.test(\"Email field value is correct\", function () {\r",
+							"        pm.expect(jsonData.data.email.toLowerCase()).to.eql(pm.variables.get(\"email\").toLowerCase());\r",
+							"    });\r",
+							"    pm.test(\"Token field is not null or empty\", function () {\r",
+							"        pm.expect(jsonData.data.token).to.not.be.undefined;\r",
+							"        pm.expect(jsonData.data.token).to.not.be.null;\r",
+							"        pm.expect(jsonData.data.token).to.not.eql(\"\");\r",
+							"    });\r",
+							"} else if (statusCode == 400) {\r",
+							"    pm.test(\"Status code is 400\");\r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"        pm.expect(jsonData.success).to.eql(false);\r",
+							"    });\r",
+							"    pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Bad Request\");\r",
+							"    });\r",
+							"} else if (statusCode == 401) {\r",
+							"    pm.test(\"Status code is 401\");\r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"        pm.expect(jsonData.success).to.eql(false);\r",
+							"    });\r",
+							"    pm.test(\"Message is 'Incorrect email address or password'\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Incorrect email address or password\");\r",
+							"    });\r",
+							"} else if (statusCode == 500) {\r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"        pm.expect(jsonData.success).to.eql(false);\r",
+							"    });\r",
+							"    pm.test(\"Status code is 500\");\r",
+							"    pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Internal Error Server\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"{{email}}\",\r\n        \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var statusCode = pm.response.code;\r",
+							"if (statusCode === 200) {\r",
+							"  pm.test(\"Status code is 200\");\r",
+							"  pm.test(\"message is 'Profile successful'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Profile successful\")\r",
+							"  })\r",
+							"  pm.test(\"Response 'success' field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(true)\r",
+							"  })\r",
+							"  pm.test(\"Name field value is correct\", function () {\r",
+							"    pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"name\"))\r",
+							"  })\r",
+							"  pm.test(\"Email field value is correct\", function () {\r",
+							"    pm.expect(jsonData.data.email.toLowerCase()).to.eql(pm.variables.get(\"email\").toLowerCase())\r",
+							"  })\r",
+							"  pm.test(\"Id field is valid\", function () {\r",
+							"    pm.expect(jsonData.data.id).to.eql(pm.variables.get(\"userId\"))\r",
+							"  })\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/users/profile",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Updateprofile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var secondName = pm.variables.replaceIn('{{$randomFirstName}}')\r",
+							"pm.environment.set(\"secondName\",secondName)\r",
+							"\r",
+							"\r",
+							"var company = pm.variables.replaceIn('{{$randomCompanyName}}')\r",
+							"pm.environment.set(\"company\",company)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"if(statusCode == 200)\r",
+							"{\r",
+							"    pm.test(\"Status code is 200\")\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Profile updated successful\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Success field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(true)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Name field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"secondName\"))\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Email field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.email.toLowerCase()).to.eql(pm.variables.get(\"email\").toLowerCase())\r",
+							"})\r",
+							"\r",
+							"pm.test(\"ID field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.id).to.eql(pm.variables.get(\"userId\"))\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Phone field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.phone).to.eql(pm.variables.get(\"phone\"))\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Company field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.company).to.eql(pm.variables.get(\"company\"))\r",
+							"})}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"{{secondName}}\",\r\n        \"phone\": \"{{phone}}\",\r\n        \"company\": \"{{company}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/profile",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logOut",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" var jsonData = pm.response.json()\r",
+							" var statusCode = pm.response.code\r",
+							" if(statusCode==200)\r",
+							" {\r",
+							"    pm.test(\"status  code is 200\")\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"User has been successfully logged out\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Success field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(true)\r",
+							"})\r",
+							" }\r",
+							" else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Access token is not valid or has expired, you will need to login\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}\r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/users/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" var jsonData = pm.response.json()\r",
+							" var statusCode = pm.response.code\r",
+							" if(statusCode==200)\r",
+							" {\r",
+							"    pm.test(\"status  code is 200\")\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Account successfully deleted\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Success field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(true)\r",
+							"})\r",
+							" }\r",
+							" else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Access token is not valid or has expired, you will need to login'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Access token is not valid or has expired, you will need to login\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}\r",
+							" \r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/users/delete-account",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"delete-account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Notes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var  jsonData = pm.response.json()\r",
+							"pm.environment.set(\"Id\",jsonData.data.id)\r",
+							"var statusCode = pm.response.code\r",
+							"if(statusCode == 200)\r",
+							"{\r",
+							"    pm.test(\"status code is 200\")\r",
+							"   pm.test(\"Message field is correct\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Note successfully created\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Success field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.be.true\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Title field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.title).to.eql(\"API Notes\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Description field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.description).to.eql(\"API documentation\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Category field is correct\", function () {\r",
+							"    pm.expect(jsonData.data.category).to.eql(\"Personal\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Completed field is false\", function () {\r",
+							"    pm.expect(jsonData.data.completed).to.eql(false)\r",
+							"})\r",
+							" \r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"title\": \"API Notes\",\r\n        \"description\": \"API documentation\",\r\n        \"category\": \"Personal\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/notes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "viewnote",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"\r",
+							"if(statusCode == 200) {\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status code is 200\")\r",
+							"pm.test(\"Message field is correct\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Notes successfully retrieved\")\r",
+							"})\r",
+							"pm.test(\"Success field is true\", function () {\r",
+							"    pm.expect(jsonData.success).to.be.true\r",
+							"})\r",
+							"var notes = jsonData.data[0]\r",
+							"pm.test(\"data field is correct\", function () {\r",
+							"    pm.expect(notes.id).to.eql(pm.environment.get(\"Id\"))\r",
+							"    pm.expect(notes.title).to.eql(\"API Notes\")\r",
+							"    pm.expect(notes.description).to.eql(\"API documentation\")\r",
+							"    pm.expect(notes.category).to.eql(\"Personal\")\r",
+							"    pm.expect(notes.completed).to.eql(false)\r",
+							"    pm.expect(notes.user_id).to.eql(\"67bf27295f5a0b0286af9d33\")\r",
+							"})\r",
+							"\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/notes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checknote",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"\r",
+							"if(statusCode === 200) {\r",
+							"\r",
+							"    pm.test(\"Status code is 200\")\r",
+							"\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Note successfully retrieved\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Success field is true\", function () {\r",
+							"        pm.expect(jsonData.success).to.be.true\r",
+							"    })\r",
+							"    pm.test(\"data field is correct\", function () {\r",
+							"        pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"Id\"))\r",
+							"        pm.expect(jsonData.data.title).to.eql(\"API Notes\")\r",
+							"        pm.expect(jsonData.data.description).to.eql(\"API documentation\")\r",
+							"        pm.expect(jsonData.data.category).to.eql(\"Personal\")\r",
+							"        pm.expect(jsonData.data.completed).to.eql(false) \r",
+							"        pm.expect(jsonData.data.user_id).to.eql(\"67bf27295f5a0b0286af9d33\")\r",
+							"    })\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{accept}}",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/notes/{{Id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"\r",
+							"if(statusCode === 200) {\r",
+							"\r",
+							"    pm.test(\"Status code is 200\")\r",
+							"\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Note successfully Updated\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Success field is true\", function () {\r",
+							"        pm.expect(jsonData.success).to.be.true\r",
+							"    })\r",
+							"    pm.test(\"data field is correct\", function () {\r",
+							"        pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"Id\"))\r",
+							"        pm.expect(jsonData.data.title).to.eql(\"Notes\")\r",
+							"        pm.expect(jsonData.data.description).to.eql(\"api exam\")\r",
+							"        pm.expect(jsonData.data.category).to.eql(\"Home\")\r",
+							"        pm.expect(jsonData.data.completed).to.eql(false) \r",
+							"        pm.expect(jsonData.data.user_id).to.eql(\"67bf27295f5a0b0286af9d33\")\r",
+							"    })\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"title\": \"Notes\",\r\n        \"description\": \"api exam\",\r\n        \"completed\": \"false\",\r\n        \"category\": \"Home\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/notes/{{Id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"\r",
+							"if(statusCode === 200) {\r",
+							"\r",
+							"    pm.test(\"Status code is 200\")\r",
+							"\r",
+							"    pm.test(\"Message field is correct\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Note successfully Updated\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Success field is true\", function () {\r",
+							"        pm.expect(jsonData.success).to.be.true\r",
+							"    })\r",
+							"    pm.test(\"data field is correct\", function () {\r",
+							"        pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"Id\"))\r",
+							"        pm.expect(jsonData.data.title).to.eql(\"Notes\")\r",
+							"        pm.expect(jsonData.data.description).to.eql(\"api exam\")\r",
+							"        pm.expect(jsonData.data.category).to.eql(\"Home\")\r",
+							"        pm.expect(jsonData.data.completed).to.eql(true) \r",
+							"        pm.expect(jsonData.data.user_id).to.eql(\"67bf27295f5a0b0286af9d33\")\r",
+							"    })\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"completed\": \"true\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/notes/{{Id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"if (statusCode === 200) {\r",
+							"\r",
+							"    pm.test(\"Response 'success' field is true\", function () {\r",
+							"        pm.expect(jsonData.success).to.eql(true)\r",
+							"    })\r",
+							"    pm.test(\"Status code is 200\")\r",
+							"    pm.test(\"Message is 'Note successfully deleted'\", function () {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Note successfully deleted\")\r",
+							"    })\r",
+							"}\r",
+							"else if(statusCode==400) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 400\")\r",
+							"      pm.test(\"Message is 'Bad Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Bad Request\")\r",
+							"})\r",
+							"\r",
+							"} else if(statusCode==401) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 401\")\r",
+							"      pm.test(\"Message is 'Unauthorized Request'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unauthorized Request\")\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode==500) {\r",
+							"    \r",
+							"    pm.test(\"Response 'success' field is false\", function () {\r",
+							"    pm.expect(jsonData.success).to.eql(false)})\r",
+							"    pm.test(\"Status code is 500\")\r",
+							"      pm.test(\"Message is 'Internal Error Server'\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Internal Error Server\")\r",
+							"})\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/notes/{{Id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
