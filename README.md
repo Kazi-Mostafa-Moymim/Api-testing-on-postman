@@ -1,5 +1,4 @@
 # Api-testing-on-postman
-### **Rest Booking API Testing with Postman Newman**
 This project demonstrates API testing using Postman, providing a collection of tests to validate various endpoints of the API. 
 
 ### **Features**
@@ -11,7 +10,7 @@ This project demonstrates API testing using Postman, providing a collection of t
 - Test scripts for assertions and validations
 
 ## API Documentation:
-- https://documenter.getpostman.com/view/13082503/2sA2xmUAJ1
+- https://documenter.getpostman.com/view/41463947/2sB2cd4xxm
   
 ### **Technology used:**
 - Postman
@@ -27,7 +26,7 @@ This project demonstrates API testing using Postman, providing a collection of t
 1. Postman: If you haven't already, [download and install Postman.](https://www.postman.com/downloads/)
 2. Clone the repository:
  ```console 
-  git clone https://github.com/ebrahimhossaincse/Automated-Testing-of-Rest-Booking-API-with-Newman-Report.git
+  https://github.com/Kazi-Mostafa-Moymim/Api-testing-on-postman.git
 ```
 3. Import the Postman collection:
     - Open Postman.
@@ -61,105 +60,113 @@ This project demonstrates API testing using Postman, providing a collection of t
 
 ## Test Case Scenarios:
 
-## _**1. Create New Booking**_
+## _**1. Health Check**_
 
-### Request URL: https://restful-booker.herokuapp.com/booking/
-### Request Method: POST
-### Pre-request Script:
-```console 
-    var firstName = pm.variables.replaceIn("{{$randomFirstName}}")
-    pm.environment.set("firstName", firstName)
-    console.log("First Name Value "+firstName)
-    
-    var lastName = pm.variables.replaceIn("{{$randomLastName}}")
-    pm.environment.set("lastName", lastName)
-    console.log("Last Name Value "+lastName)
-    
-    var totalPrice = pm.variables.replaceIn("{{$randomInt}}")
-    pm.environment.set("totalPrice", totalPrice)
-    console.log(totalPrice)
-    
-    var depositPaid = pm.variables.replaceIn("{{$randomBoolean}}")
-    pm.environment.set("depositPaid", depositPaid)
-    console.log(depositPaid)
-    
-    //Date
-    const moment = require('moment')
-    const today = moment()
-    pm.environment.set("checkin", today.add(1,'d').format("YYYY-MM-DD"))
-    pm.environment.set("checkout",today.add(5,'d').format("YYYY-MM-DD") )
-    
-    var additionalNeeds = pm.variables.replaceIn("{{$randomNoun}}")
-    pm.environment.set("additionalNeeds", additionalNeeds)
-```
-  **Request Body:** 
- ```console 
-  {
-	  "firstname" : "{{firstName}}",
-	  "lastname" : "{{lastName}}",
-	  "totalprice" : {{totalPrice}},
-	  "depositpaid" : {{depositPaid}},
-	  "bookingdates" : {
-    	  "checkin" : "{{checkin}}",
-    	  "checkout" : "{{checkout}}"
-	  },
-	  "additionalneeds" : "{{additionalNeeds}}"
-  }
-```
+### Request URL: https://practice.expandtesting.com/notes/api
+### Request Method: GET
   **Response Body:**
  ```console 
   {
-      "bookingid": 4334,
-      "booking": {
-          "firstname": "Joelle",
-          "lastname": "Krajcik",
-          "totalprice": 266,
-          "depositpaid": true,
-          "bookingdates": {
-              "checkin": "2024-03-15",
-              "checkout": "2024-03-20"
-          },
-          "additionalneeds": "monitor"
-      }
-  }
-```
- ## _**2. Get Booking Details By ID**_
-### Request URL: https://restful-booker.herokuapp.com/booking/bookingid
-### Request Method: GET
-### Response Body:
- ```console 
-{
-    "firstname": "D'angelo",
-    "lastname": "Feeney",
-    "totalprice": 757,
-    "depositpaid": true,
-    "bookingdates": {
-        "checkin": "2024-03-15",
-        "checkout": "2024-03-20"
-    },
-    "additionalneeds": "hard drive"
+    "success": true,
+    "status": 200,
+    "message": "Notes API is Running"
 }
 ```
-## _**3. Create A Token For Authentication.**_
-### Request URL: https://restful-booker.herokuapp.com/auth
+ ## _**2. User Registration **_
+### Request URL: https://practice.expandtesting.com/notes/api/users/register
 ### Request Method: POST
-### Pre-request Script: None
 ### Request Body:
  ```console 
 {
-	"username": "admin",
-	"password": "password123"
+        "name": "Ebrahim",
+        "email": "ebrahim@noemail.com",
+        "password": "test123"
 }
+
+```
+### Pre-request Script:
+ ```console 
+{
+   var name = pm.variables.replaceIn('{{$randomFirstName}}')
+pm.environment.set("name",name)
+var email = pm.variables.replaceIn('{{$randomEmail}}')
+pm.environment.set("email",email)
+var password = pm.variables.replaceIn('{{$randomPassword}}')
+pm.environment.set("password",password)
+}
+```
+### Response Body:
+ ```console 
+User account created successfully
+{
+  "success": true,
+  "status": 201,
+  "message": "User account created successfully",
+  "data": {
+    "id": 6,
+    "name": "Ebrahim",
+    "email": "ebrahim@noemail.com"
+  }
+}
+
+Bad Request - Invalid input data
+{
+  "success": false,
+  "status": 400,
+  "message": "Invalid input data"
+}
+
+```
+## _**3. user Profile.**_
+### Request URL: https://practice.expandtesting.com/notes/api/users/profile
+### Request Method: GET
+### Pre-request Script: None
+### Header:
+ ```console 
+
+        "accept": "application/json",
+        "x-auth-token": "c89135e02a92470b886827fd9ccdf45a8e3f6af19fc8483f8e3647575ae7fd21"
+
 ```
   **Response Body:**
  ```console 
+User profile information retrieved successfully 200
+
 {
-    "token": "06eb798bf6f2caa"
+  "success": true,
+  "status": 200,
+  "message": "Profile successful",
+  "data": {
+    "id": "67bf14125f5a0b0286af9adf",
+    "name": "Ebrahim",
+    "email": "ebrahim@noemail.com"
+  }
+}
+	
+Bad Request 400
+{
+  "success": false,
+  "status": 400,
+  "message": "Bad Request"
+}
+	
+Unauthorized Request 401
+{
+  "success": false,
+  "status": 401,
+  "message": "Unauthorized Request"
+}
+	
+Internal Error Server 500
+{
+  "success": false,
+  "status": 500,
+  "message": "Internal Error Server"
 }
 ```
 
  ## _**4. Update the Booking Details**_
-### Request URL: https://restful-booker.herokuapp.com/booking/bookingid
+### Request URL: https://practice.expandtesting.com/notes/api
 ### Request Method: PUT
 ### Pre-request Script:
 ```console 
@@ -222,18 +229,18 @@ This project demonstrates API testing using Postman, providing a collection of t
 
  ## _**5. Delete Booking Record**_
 
-### Request URL: https://restful-booker.herokuapp.com/booking/bookingid
+### Request URL: https://practice.expandtesting.com/notes/api
 ### Request Method: DELETE
 ### Response Body: None 
 
 ## Run Command:  
 - Run Command for Console: 
 ```console 
-newman run Ebrahim_Hossain_SQA.postman_collection.json -e Ebrahim_Hossain_SQA.postman_environment.json 
+newman run KaziMostafaMoymim_01400804185.postman_collection.json -e KaziMostafaMoymim_01400804185.postman_environment.json 
 ```
 - Run Command for Report: 
 ```console 
-newman run Ebrahim_Hossain_SQA.postman_collection.json -e Ebrahim_Hossain_SQA.postman_environment.json -r cli,htmlextra
+newman run KaziMostafaMoymim_01400804185.postman_collection.json -e KaziMostafaMoymim_01400804185.postman_environment.json -r cli,htmlextra
 ```
 
 ## Newman Report Summary:
