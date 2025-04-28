@@ -78,8 +78,8 @@ This project demonstrates API testing using Postman, providing a collection of t
 ### Request Body:
  ```console 
 {
-        "name": "Ebrahim",
-        "email": "ebrahim@noemail.com",
+        "name": "Mostafa",
+        "email": "Mostafa@noemail.com",
         "password": "test123"
 }
 
@@ -165,73 +165,163 @@ Internal Error Server 500
 }
 ```
 
- ## _**4. Update the Booking Details**_
+ ## _**4. Update the Profile Details**_
 ### Request URL: https://practice.expandtesting.com/notes/api
 ### Request Method: PUT
 ### Pre-request Script:
 ```console 
-    var firstName = pm.variables.replaceIn("{{$randomFirstName}}")
-    pm.environment.set("firstName", firstName)
-    console.log("First Name Value "+firstName)
+    headers: {
+        "accept": "application/json",
+        "x-auth-token": "c89135e02a92470b886827fd9ccdf45a8e3f6af19fc8483f8e3647575ae7fd21"
+   }
+
+Body: 
+{
+        "name": "Ebrahim",
+        "phone": "1886644261",
+        "company": "Achieve"
+}
     
-    var lastName = pm.variables.replaceIn("{{$randomLastName}}")
-    pm.environment.set("lastName", lastName)
-    console.log("Last Name Value "+lastName)
     
-    var totalPrice = pm.variables.replaceIn("{{$randomInt}}")
-    pm.environment.set("totalPrice", totalPrice)
-    console.log(totalPrice)
-    
-    var depositPaid = pm.variables.replaceIn("{{$randomBoolean}}")
-    pm.environment.set("depositPaid", depositPaid)
-    console.log(depositPaid)
-    
-    //Date
-    const moment = require('moment')
-    const today = moment()
-    pm.environment.set("checkin", today.add(1,'d').format("YYYY-MM-DD"))
-    pm.environment.set("checkout",today.add(5,'d').format("YYYY-MM-DD") )
-    
-    var additionalNeeds = pm.variables.replaceIn("{{$randomNoun}}")
-    pm.environment.set("additionalNeeds", additionalNeeds)
 ```
+### Pre-request Script:
+ ```console 
+var secondName = pm.variables.replaceIn('{{$randomFirstName}}')
+pm.environment.set("secondName",secondName)
+
+
+var company = pm.variables.replaceIn('{{$randomCompanyName}}')
+pm.environment.set("company",company)
+
+```
+
+### Response Script:
   **Request Body:** 
  ```console 
-  {
-	  "firstname" : "{{firstName}}",
-	  "lastname" : "{{lastName}}",
-	  "totalprice" : {{totalPrice}},
-	  "depositpaid" : {{depositPaid}},
-	  "bookingdates" : {
-    	  "checkin" : "{{checkin}}",
-    	  "checkout" : "{{checkout}}"
-	  },
-	  "additionalneeds" : "{{additionalNeeds}}"
+  Profile updated successful 200
+{
+  "success": true,
+  "status": 200,
+  "message": "Profile updated successful",
+  "data": {
+    "id": "67bf14125f5a0b0286af9adf",
+    "name": "Ebrahim",
+    "email": "ebrahim@noemail.com",
+    "phone": "1886644261",
+    "company": "Achieve"
   }
-```
-  **Response Body:**
- ```console 
-  {
-      "bookingid": 4334,
-      "booking": {
-          "firstname": "Joelle",
-          "lastname": "Krajcik",
-          "totalprice": 266,
-          "depositpaid": true,
-          "bookingdates": {
-              "checkin": "2024-03-15",
-              "checkout": "2024-03-20"
-          },
-          "additionalneeds": "monitor"
-      }
-  }
-```
-
- ## _**5. Delete Booking Record**_
-
-### Request URL: https://practice.expandtesting.com/notes/api
+}
+	
+Bad Request 400
+{
+  "success": false,
+  "status": 400,
+  "message": "Bad Request"
+}
+	
+Unauthorized Request 401
+{
+  "success": false,
+  "status": 401,
+  "message": "Unauthorized Request"
+}
+	
+Internal Error Server 500
+{
+  "success": false,
+  "status": 500,
+  "message": "Internal Error Server"
+}
+	 ```
+ ## _**4. Log out the Profile**_
+### Request URL: https://practice.expandtesting.com/notes/api/users/logout
 ### Request Method: DELETE
-### Response Body: None 
+### Pre-request Script:
+  **Header:**
+ ```console 
+  { 
+ "accept": "application/json",
+        "x-auth-token": "c89135e02a92470b886827fd9ccdf45a8e3f6af19fc8483f8e3647575ae7fd21" }
+```
+ **Response:**
+ ```console 
+  { 
+ 
+Successful Request 200
+{
+  "success": true,
+  "status": 200,
+  "message": "User has been successfully logged out"
+}
+	
+Bad Request 400
+{
+  "success": false,
+  "status": 400,
+  "message": "Bad Request"
+}
+	
+Unauthorized Request 401
+{
+  "success": false,
+  "status": 401,
+  "message": "Unauthorized Request"
+}
+	
+Internal Error Server 500
+{
+  "success": false,
+  "status": 500,
+  "message": "Internal Error Server"
+}```
+
+
+ ## _**5. Delete the profile**_
+
+### Request URL: https://practice.expandtesting.com/notes/api/users/delete-account
+### Request Method: DELETE
+### Header:
+ ```console
+{
+        "accept": "application/json",
+        "x-auth-token": "c89135e02a92470b886827fd9ccdf45a8e3f6af19fc8483f8e3647575ae7fd21"
+   }
+
+
+```
+### Response Body: 
+ ```console 
+  { 
+ 
+Successful Request 200
+{
+  "success": true,
+  "status": 200,
+  "message": "User has been successfully logged out"
+}
+	
+Bad Request 400
+{
+  "success": false,
+  "status": 400,
+  "message": "Bad Request"
+}
+	
+Unauthorized Request 401
+{
+  "success": false,
+  "status": 401,
+  "message": "Unauthorized Request"
+}
+	
+Internal Error Server 500
+{
+  "success": false,
+  "status": 500,
+  "message": "Internal Error Server"
+}```
+
+
 
 ## Run Command:  
 - Run Command for Console: 
